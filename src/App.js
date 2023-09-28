@@ -13,11 +13,11 @@ function App() {
   
   return (
     <ThemeContextProvider>
-      <BrowserRouter basename={process.env.PUBLIC_URL}>
+      <BrowserRouter>
         <Routes>
-          <Route path="/" element={<Layout />}>
+          <Route path="/web-topics" element={<Layout />}>
             <Route index element={<TopicsDisplay />} />
-            <Route path="details/:id" element={<TopicDetails />} />
+            <Route path="web-topics/details/:id" element={<TopicDetails />} />
           </Route>
         </Routes>
       </BrowserRouter>
