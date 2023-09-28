@@ -4,7 +4,7 @@ import styled, { css } from 'styled-components';
 
 function ButtonWithIcon({ iconName, iconText }) {
   return (
-    <button onclick="darkMode()" class="btn-with-icon">
+    <button class="btn-with-icon">
       <ion-icon name={iconName}></ion-icon>
       <span>{iconText}</span>
     </button>
