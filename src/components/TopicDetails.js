@@ -15,14 +15,13 @@ const images = importAll(require.context('../images', false, /\.(png|jpeg|jpg|sv
 
 function TopicDetails() {
     const [topic, setTopics] = useState([]);
-    const [currentTopic, setCurrentTopic] = useState(null);
     const { id } = useParams();
-    const subTopics = currentTopic?.subTopics?.map(subTopic => (
+    const subTopics = topic?.subtopics?.map(subtopics => (
         <li>
             <ion-icon
                 name="checkmark-circle-outline"
             >
-            </ion-icon>{subTopic}
+            </ion-icon>{subtopics}
         </li>
     ));
     const fetchData = async () => {
@@ -31,8 +30,8 @@ function TopicDetails() {
         setTopics(data)
     }
 
-    useEffect(async () => {
-        await fetchData();
+    useEffect( () => {
+         fetchData();
     }, []);
 
     return (

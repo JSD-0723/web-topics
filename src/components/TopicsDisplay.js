@@ -111,7 +111,7 @@ const TopicsDisplay = ({ }) => {
                     {topics.length > 0 && (
                         <article class="cards">
                             {viewTopics.map(topic => (
-                                <Link to={`/details/${topic.id}`}>
+                                <Link to={`/web-topics/details/${topic.id}`}>
                                     <a class="card">
                                         <img class="card-img" key={topic.id} src={images[topic.image]} alt="{topic.image}" />
                                         <div class="item-content">

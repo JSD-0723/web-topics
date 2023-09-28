@@ -9,7 +9,7 @@ function PrimaryHeader() {
     return (
         <header class="primary-header">
             <div class="primary-header-container">
-                <Link to ='/'>
+                <Link to ='/web-topics'>
                     <h1 class="primary-header-title">Web Topics</h1>
                 </Link>
                 <div class="primary-header-buttons-container">

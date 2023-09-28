@@ -17,7 +17,7 @@ function App() {
         <Routes>
           <Route path="/web-topics" element={<Layout />}>
             <Route index element={<TopicsDisplay />} />
-            <Route path="web-topics/details/:id" element={<TopicDetails />} />
+            <Route path="/web-topics/details/:id" element={<TopicDetails />} />
           </Route>
         </Routes>
       </BrowserRouter>
