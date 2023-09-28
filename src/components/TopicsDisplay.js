@@ -2,6 +2,8 @@ import styles from '../css/styles.css'
 import React from 'react';
 import SearchBox from './SearchBox';
 import { useEffect, useState } from "react";
+import {loadTopics} from '../shared/api';
+import { Link } from 'react-router-dom';
 
 function importAll(r) {
     let images = {};
@@ -12,41 +14,60 @@ const images = importAll(require.context('../images', false, /\.(png|jpeg|jpg|sv
 
 
 const TopicsDisplay = ({}) => {
-    const [topic, setTopics] = useState([])
 
-    const fetchData = async () => {
-        const response = await fetch("https://tap-web-1.herokuapp.com/topics/list")
-        const data = await response.json()
-        setTopics(data)
-    }
+    const [topics, setTopics] = useState([]);
+    const [viewTopics, setViewTopics] = useState(null);
+
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(null);
+
+    const [search, setSearch] = useState ('');
+    const [sortBy, setSortBy] = useState ('');
+
+    const [filterBy, setFilterBy] = useState ('');
+    const [filterOptions, setFilterOptions] = useState(null);
 
     useEffect(() => {
-        fetchData()
-    }, []);
-    const Search = e => {
-        const query = e.target.value;
-        fetch(`https://tap-web-1.herokuapp.com/topics/list?phrase=${query}`)
-            .then(response => {
-                return response.json()
-            })
-            .then(data => {
-                setTopics(data)
-            })
-    }
+        setLoading(true);
+        setTopics([]);
 
-    const Filter = e => {
-        const query = e.target.value;
-        const filteredTopic = topic.filter(
-            (topic) => topic.category === query);
+        loadTopics(search)
+        .then((data) => {
+            setTopics(data);
+        })
+        .catch((err) => {
+            setError(err);
+        })
+        .finally(() =>{
+            setLoading(false);
+        });
+    }, [search]);
+
+    useEffect(() => {
+        let categories = new Set();
+        topics.forEach(topic => categories.add(topic.category));
+        setFilterOptions([...categories]);
+        let updatedTopics = [...topics];
         
-        fetch(`https://tap-web-1.herokuapp.com/topics/list`)
-            .then(response => {
-                return response.json();
-            })
-            .then(filteredTopic => {
-                setTopics(filteredTopic)
-            })
-    }
+        if (sortBy) {
+            updatedTopics.sort((a,b) => {
+                switch (sortBy) {
+                    case 'author':
+                        return a['name'] < b['name']? -1: 1;
+
+                    case 'topic':
+                        return a['topic'] < b['topic']? -1: 1;
+                    
+                    default:
+                        return updatedTopics;
+                }
+            });
+        }
+        if (filterBy) {
+            updatedTopics = updatedTopics.filter(topic => topic.category == filterBy);
+        }
+        setViewTopics(updatedTopics);
+    }, [topics,sortBy,filterBy]);
     
     return (
         <>
@@ -57,7 +78,7 @@ const TopicsDisplay = ({}) => {
                         <div class="search-filters-bar">
                             <div class="search-input">
                                 <ion-icon name="search-outline" style={{ color: "var(--body-text)" }}></ion-icon>
-                                <input onChange={Search} class="input-text" type="text" placeholder="Search the website..." />
+                                <input  class="input-text" type="text" placeholder="Search the website..." onChange={(event) => {setSearch(event.target.value)}} />
                             </div>
                             <div class="h-line"></div>
                             <div class="v-line"></div>
@@ -65,17 +86,17 @@ const TopicsDisplay = ({}) => {
 
                                 <div class="filter">
                                     <label for="sort">Sort by:</label>
-                                    <select name="sort" id="sort" >
+                                    <select name="sort" id="sort" onChange={(event) => {setSortBy(event.target.value)}}>
                                         <option value="default">Default</option>
                                         <option value="topic" name="Topic" id="Topic">Topic</option>
-                                        <option value="name" id="Author Name">Author Name</option>
+                                        <option value="author" id="Author Name">Author Name</option>
                                     </select>
                                 </div>
                                 <div class="v-line"></div>
 
                                 <div class="filter">
                                     <label for="filter">Filter by:</label>
-                                    <select name="filter" id="filter" onChange={Filter}>
+                                    <select name="filter" id="filter" onChange={(event) => {setFilterBy(event.target.value)}}>
                                         <option value="">Default</option>
                                         <option value="Web Development Languages">Web Development Languages</option>
                                         <option value="Frontend Frameworks and Libraries">Frontend Frameworks and Libraries</option>
@@ -89,11 +110,12 @@ const TopicsDisplay = ({}) => {
                     </div>
                 </section>
                 <section class="courses">
-                    <h2 class="courses-count">"24" Web Topics Found</h2>
-                    {topic.length > 0 && (
+                    <h2 class="courses-count">"{topics.length}" Web Topics Found</h2>
+                    {topics.length > 0 && (
                         <article class="cards">
-                            {topic.map(topic => (
-                                <a class="card"> 
+                            {viewTopics.map(topic => (
+                                <Link to= { `/details/${topic.id}` }>
+                                    <a class="card"> 
                                     <img class="card-img" key={topic.id} src={images[topic.image]} alt="{topic.image}" />
                                     <div class="item-content">
                                         <h2 class="title">{topic.category}</h2>
@@ -109,6 +131,7 @@ const TopicsDisplay = ({}) => {
                                     </div>
 
                                 </a>
+                                </Link>
                             ))}
                         </article>
                     )}

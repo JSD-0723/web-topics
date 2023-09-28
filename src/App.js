@@ -7,18 +7,21 @@ import TopicsDisplay from './components/TopicsDisplay';
 import Footer from './components/Footer';
 import TopicDetails from './components/TopicDetails';
 import { Layout } from "./components/Layout";
+import { ThemeContextProvider } from "./components/ThemeContext";
 
 function App() {
+  
   return (
-    <BrowserRouter>
-    <Routes>
-      <Route path="/" element={<Layout />}>
-        <Route index element={<TopicsDisplay />} />
-        <Route path="details/:id" element={<TopicDetails />} />
-      </Route>
-    </Routes>
-  </BrowserRouter>
-
+    <ThemeContextProvider>
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<Layout />}>
+            <Route index element={<TopicsDisplay />} />
+            <Route path="details/:id" element={<TopicDetails />} />
+          </Route>
+        </Routes>
+      </BrowserRouter>
+    </ThemeContextProvider>
   );
 }
 
